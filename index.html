@@ -1,0 +1,904 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Barrio Burgos · Reserva de Recursos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F5F1E7;
+    --surface: #FFFFFF;
+    --ink: #24221F;
+    --ink-soft: #6b6459;
+    --navy: #1F2A44;
+    --navy-deep: #141b2e;
+    --navy-light: #35456b;
+    --wood: #8B5E34;
+    --wood-soft: #eadfcd;
+    --gold: #B98F1E;
+    --gold-soft: #f3e3b3;
+    --green: #3F6B4C;
+    --green-soft: #e2ede4;
+    --red: #A23B3B;
+    --red-soft: #f4e2e0;
+    --line: #DBD2BE;
+    --font-display: 'Lora', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --radius: 10px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html{ -webkit-text-size-adjust:100%; }
+  html,body{margin:0;padding:0; width:100%; overflow-x:hidden;}
+  body{
+    font-family: var(--font-body);
+    background:
+      radial-gradient(circle at 1px 1px, rgba(31,42,68,0.05) 1px, transparent 0) 0 0/16px 16px,
+      var(--bg);
+    color: var(--ink);
+    min-height:100vh;
+    font-size: 15px;
+  }
+  a{color:inherit;}
+  img, svg{ max-width:100%; }
+
+  /* ---------- HEADER (mobile-first) ---------- */
+  header.top{
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: #F5F1E7;
+    padding: 22px 16px 0;
+  }
+  .top-inner{ max-width: 980px; margin:0 auto; }
+  @media (min-width: 640px){
+    header.top{ padding: 32px 20px 0; }
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    opacity:.85;
+  }
+  h1.ward-title{
+    font-family: var(--font-display);
+    font-weight:700;
+    font-size: clamp(24px, 7vw, 42px);
+    margin: 6px 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .ward-sub{
+    font-size: 13.5px;
+    color: #d9d4c4;
+    margin: 0 0 18px;
+    max-width: 560px;
+    line-height:1.5;
+  }
+  nav.tabs{
+    display:flex;
+    gap: 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  nav.tabs button{
+    font-family: var(--font-body);
+    font-weight:600;
+    font-size: 13px;
+    background:none;
+    border:none;
+    color: #b9c0d4;
+    padding: 12px 12px;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+    white-space:nowrap;
+    flex: 0 0 auto;
+    border-bottom: 2px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  nav.tabs button:hover{ color:#fff; }
+  nav.tabs button.active{
+    color:#fff;
+    border-bottom: 2px solid var(--gold);
+  }
+  @media (min-width: 640px){
+    .ward-sub{ font-size:14px; margin-bottom:22px; }
+    nav.tabs{ gap:4px; margin:0; padding:0; }
+    nav.tabs button{ font-size:14px; padding:12px 18px; }
+  }
+
+  main{ max-width: 980px; margin: 0 auto; padding: 20px 16px 64px; }
+  .view{ display:none; animation: fadeIn .25s ease; }
+  .view.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;} }
+
+  .grid-2{ display:grid; grid-template-columns: 1fr; gap: 20px; align-items:start; }
+  @media (min-width: 860px){ .grid-2{ grid-template-columns: 1.1fr 1fr; gap:28px; } }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 2px rgba(31,42,68,0.04);
+  }
+  .card-pad{ padding: 16px; }
+  @media (min-width: 640px){
+    main{ padding: 32px 20px 80px; }
+    .card-pad{ padding: 24px; }
+  }
+
+  .section-label{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color: var(--wood);
+    margin: 0 0 14px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-label::after{
+    content:""; flex:1; height:1px; background: var(--line);
+  }
+
+  h2.form-title{
+    font-family: var(--font-display);
+    font-size: 19px;
+    margin: 0 0 4px;
+  }
+  .form-hint{ font-size:12.5px; color:var(--ink-soft); margin:0 0 18px; line-height:1.45; }
+
+  label{
+    display:block;
+    font-size: 12.5px;
+    font-weight:600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .field{ margin-bottom: 14px; }
+  input[type=text], input[type=date], input[type=time], input[type=number], select, textarea{
+    width:100%;
+    font-family: var(--font-body);
+    font-size: 16px; /* 16px avoids iOS auto-zoom on focus */
+    padding: 11px 12px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: #FCFAF5;
+    color: var(--ink);
+    outline:none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  select{
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%), linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 32px;
+  }
+  input:focus, select:focus, textarea:focus{
+    border-color: var(--navy-light);
+    box-shadow: 0 0 0 3px rgba(53,69,107,0.14);
+  }
+  textarea{ resize: vertical; min-height: 64px; }
+  .row2{ display:grid; grid-template-columns: 1fr; gap:0; }
+  @media (min-width: 560px){
+    h2.form-title{ font-size:22px; }
+    .form-hint{ font-size:13px; margin-bottom:20px; }
+    .field{ margin-bottom:16px; }
+    .row2{ grid-template-columns: 1fr 1fr; gap:14px; }
+  }
+
+  .checkbox-row{
+    display:flex; align-items:flex-start; gap:10px;
+    padding: 13px 14px;
+    background: var(--wood-soft);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    cursor:pointer;
+  }
+  .checkbox-row input{ width:18px; height:18px; flex:0 0 auto; margin-top:2px; accent-color: var(--wood); }
+  .checkbox-row span{ font-size:13px; line-height:1.4; color:#4a4033; font-weight:500;}
+
+  .support-block{
+    border-left: 3px solid var(--wood);
+    padding: 14px;
+    margin: -2px 0 16px;
+    background: #FCF8F0;
+    border-radius: 0 8px 8px 0;
+    display:none;
+  }
+  .support-block.show{ display:block; }
+
+  .file-drop{
+    border: 1.5px dashed var(--line);
+    border-radius: 8px;
+    padding: 16px 12px;
+    text-align:center;
+    font-size:13px;
+    color: var(--ink-soft);
+    background:#fff;
+    cursor:pointer;
+    min-height:44px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .file-drop.has-file{ border-color: var(--green); color: var(--green); background: var(--green-soft); }
+  .file-drop input{ display:none; }
+
+  button.primary{
+    width:100%;
+    font-family: var(--font-body);
+    font-weight:700;
+    font-size:15px;
+    padding: 14px 16px;
+    min-height:48px;
+    background: var(--navy);
+    color: #fff;
+    border:none;
+    border-radius: 8px;
+    cursor:pointer;
+    letter-spacing:.01em;
+    transition: background .15s ease, transform .1s ease;
+  }
+  button.primary:hover{ background: var(--navy-light); }
+  button.primary:active{ transform: scale(0.99); }
+
+  .msg{
+    font-size:13px; padding:10px 12px; border-radius:7px; margin-bottom:16px; display:none;
+  }
+  .msg.show{ display:block; }
+  .msg.ok{ background: var(--green-soft); color: var(--green); }
+  .msg.warn{ background: var(--red-soft); color: var(--red); }
+
+  /* ---------- TICKET / RESERVATION CARD (signature element) ---------- */
+  .ticket{
+    position:relative;
+    display:grid;
+    grid-template-columns: 50px 1fr;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow:hidden;
+  }
+  .ticket-stub{
+    background: var(--navy);
+    color:#fff;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 8px 3px;
+    text-align:center;
+    position:relative;
+  }
+  .ticket-stub::after{
+    content:"";
+    position:absolute;
+    right:-9px; top:0; bottom:0; width:18px;
+    background-image: radial-gradient(circle 5px, var(--bg) 5px, transparent 5.5px);
+    background-size: 18px 18px;
+    background-position: center;
+    background-repeat: repeat-y;
+  }
+  .ticket-stub .day{ font-family: var(--font-display); font-size:18px; font-weight:700; line-height:1; }
+  .ticket-stub .mon{ font-family: var(--font-mono); font-size:9px; text-transform:uppercase; letter-spacing:.06em; opacity:.8; margin-top:2px;}
+  .ticket-body{ padding: 12px 12px 12px 18px; min-width:0; }
+  .ticket-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; }
+  .ticket-org{ font-family: var(--font-display); font-size:15px; font-weight:600; margin:0; }
+  .ticket-time{
+    font-family: var(--font-mono); font-size:12px; color:var(--navy);
+    background: #eef0f6; padding:3px 8px; border-radius:5px; white-space:nowrap;
+  }
+  .ticket-meta{ font-size:12px; color:var(--ink-soft); margin-top:6px; display:flex; gap:10px; flex-wrap:wrap; }
+  .tag{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:11px; font-weight:600; padding: 3px 8px; border-radius:20px;
+  }
+  .tag.resource{ background: var(--wood-soft); color: var(--wood); }
+  .tag.support{ background: var(--gold-soft); color: var(--gold); }
+  .ticket-purpose{ font-size:13px; color:var(--ink); margin-top:8px; line-height:1.4; word-break:break-word; }
+  .ticket-actions{ margin-top:10px; display:flex; gap:8px; }
+  .ticket-actions button{
+    font-family: var(--font-body); font-size:12.5px; font-weight:600;
+    padding: 8px 12px; min-height:38px; border-radius:6px; cursor:pointer; border:1px solid var(--line); background:#fff;
+    flex:1;
+  }
+  .ticket-actions button.edit{ color: var(--navy); }
+  .ticket-actions button.del{ color: var(--red); border-color: var(--red-soft); }
+  .ticket-actions button:hover{ background:#f6f4ee; }
+
+  @media (min-width: 640px){
+    .ticket{ grid-template-columns: 64px 1fr; margin-bottom:16px; }
+    .ticket-stub{ padding:10px 4px; }
+    .ticket-stub .day{ font-size:22px; }
+    .ticket-stub .mon{ font-size:10px; }
+    .ticket-body{ padding: 14px 18px 14px 24px; }
+    .ticket-org{ font-size:16.5px; }
+    .ticket-meta{ font-size:12.5px; gap:14px; }
+    .ticket-actions button{ flex: 0 0 auto; }
+  }
+
+  .filters{ display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+  .filters select, .filters input[type=date]{ width:100%; }
+  .filters button.primary{ width:100%; }
+  @media (min-width: 640px){
+    .filters{ flex-direction:row; flex-wrap:wrap; margin-bottom:18px; }
+    .filters select{ width:auto; min-width:160px; }
+    .filters input[type=date]{ width:auto; }
+    .filters button.primary{ width:auto; padding:10px 16px; }
+  }
+
+  .empty{
+    text-align:center; padding: 40px 20px; color: var(--ink-soft);
+    font-size:14px;
+  }
+  .empty .big{ font-family: var(--font-display); font-size:18px; color: var(--ink); margin-bottom:6px; }
+
+  /* ---------- ADMIN ---------- */
+  .login-box{ max-width: 360px; margin: 16px auto; }
+  @media (min-width: 640px){ .login-box{ margin: 40px auto; } }
+  .admin-bar{
+    display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-bottom: 18px;
+    background: var(--gold-soft); border:1px solid var(--gold); border-radius:8px; padding: 10px 14px;
+  }
+  .admin-bar span{ font-size:12.5px; font-weight:600; color:#6b5316; }
+  .admin-bar button{
+    font-size:12px; font-weight:700; background:none; border:1px solid var(--gold); color:#6b5316;
+    padding:7px 14px; min-height:36px; border-radius:6px; cursor:pointer;
+  }
+  .edit-form{ padding: 14px; background:#FCFAF5; border-top:1px solid var(--line); }
+  .edit-form .row2{ margin-bottom:0; }
+  @media (min-width: 640px){ .edit-form{ padding: 14px 18px; } }
+
+  .icon{ width:16px; height:16px; display:inline-block; vertical-align:-3px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="eyebrow">Sistema de reserva de recursos tecnológicos</div>
+    <h1 class="ward-title">Barrio Burgos</h1>
+    <p class="ward-sub">Coordina el uso del Smart TV, el Laptop y el Proyector de Video entre las organizaciones del barrio, y solicita apoyo adicional como impresiones.</p>
+    <nav class="tabs">
+      <button data-view="reservar" class="active">Reservar un recurso</button>
+      <button data-view="calendario">Reservas programadas</button>
+      <button data-view="admin">Panel de administración</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ======================= RESERVAR ======================= -->
+  <section id="view-reservar" class="view active">
+    <div class="grid-2">
+      <div class="card card-pad">
+        <p class="section-label">Nueva reserva</p>
+        <h2 class="form-title">Solicitar un recurso</h2>
+        <p class="form-hint">Completa los datos y revisa que no se cruce con otra reserva ya programada.</p>
+
+        <div class="msg" id="form-msg"></div>
+
+        <form id="reserva-form">
+          <div class="field">
+            <label>Organización</label>
+            <select id="f-org" required>
+              <option value="">Selecciona una organización…</option>
+              <option>Cuórum de Elderes</option>
+              <option>Sociedad de Socorro</option>
+              <option>Mujeres Jóvenes</option>
+              <option>Hombres Jóvenes</option>
+              <option>Primaria</option>
+              <option>Escuela Dominical de Adultos</option>
+              <option>Escuela Dominical de Jóvenes 11 - 14</option>
+              <option>Escuela Dominical de Jóvenes 15 - 17</option>
+              <option>JAS</option>
+              <option>Obispado</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Recurso</label>
+            <select id="f-recurso" required>
+              <option value="">Selecciona un recurso…</option>
+              <option value="Smart TV">Smart TV (clase mediana)</option>
+              <option value="Laptop">Laptop (clase pequeña)</option>
+              <option value="Proyector de Video">Proyector de Video (clase numerosa)</option>
+            </select>
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <label>Fecha</label>
+              <input type="date" id="f-fecha" required />
+            </div>
+            <div class="field">
+              <label>Persona que reserva</label>
+              <input type="text" id="f-nombre" placeholder="Nombre y apellido" required />
+            </div>
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <label>Hora de inicio</label>
+              <input type="time" id="f-inicio" required />
+            </div>
+            <div class="field">
+              <label>Hora de fin</label>
+              <input type="time" id="f-fin" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Propósito o clase (opcional)</label>
+            <textarea id="f-proposito" placeholder="Ej: Lección de la clase de doctrina del evangelio"></textarea>
+          </div>
+
+          <label class="checkbox-row" for="f-apoyo-check">
+            <input type="checkbox" id="f-apoyo-check" />
+            <span>¿Necesitas apoyo adicional? Por ejemplo, impresión de materiales.</span>
+          </label>
+
+          <div class="support-block" id="support-block">
+            <div class="field">
+              <label>Tipo de apoyo</label>
+              <select id="f-apoyo-tipo">
+                <option value="Impresiones">Impresiones</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div id="apoyo-impresiones">
+              <div class="row2">
+                <div class="field">
+                  <label>Cantidad de copias</label>
+                  <input type="number" id="f-copias" min="1" placeholder="Ej: 12" />
+                </div>
+                <div class="field">
+                  <label>Archivo a imprimir</label>
+                  <div class="file-drop" id="file-drop-label">Toca para adjuntar archivo (máx. 3 MB)</div>
+                  <input type="file" id="f-archivo" />
+                </div>
+              </div>
+            </div>
+            <div class="field" id="apoyo-otro-field" style="display:none;">
+              <label>Describe el apoyo que necesitas</label>
+              <textarea id="f-apoyo-otro" placeholder="Ej: Necesitamos ayuda para acomodar sillas y mesas"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="primary">Reservar recurso</button>
+        </form>
+      </div>
+
+      <div class="card card-pad">
+        <p class="section-label">Próximas reservas</p>
+        <h2 class="form-title" style="font-size:18px;">Vista rápida</h2>
+        <p class="form-hint">Las 5 reservas más próximas de todos los recursos.</p>
+        <div id="quick-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= CALENDARIO ======================= -->
+  <section id="view-calendario" class="view">
+    <p class="section-label">Todas las reservas</p>
+    <h2 class="form-title">Reservas programadas</h2>
+    <p class="form-hint">Filtra por recurso o por fecha para revisar disponibilidad.</p>
+
+    <div class="filters">
+      <select id="filter-recurso">
+        <option value="">Todos los recursos</option>
+        <option value="Smart TV">Smart TV</option>
+        <option value="Laptop">Laptop</option>
+        <option value="Proyector de Video">Proyector de Video</option>
+      </select>
+      <input type="date" id="filter-fecha" />
+      <button class="primary" id="clear-filters">Limpiar filtros</button>
+    </div>
+
+    <div id="full-list"></div>
+  </section>
+
+  <!-- ======================= ADMIN ======================= -->
+  <section id="view-admin" class="view">
+    <div id="admin-login-wrap">
+      <div class="card card-pad login-box">
+        <p class="section-label">Acceso restringido</p>
+        <h2 class="form-title">Panel de administración</h2>
+        <p class="form-hint">Ingresa las credenciales de administrador para modificar o eliminar reservas.</p>
+        <div class="msg" id="admin-msg"></div>
+        <form id="admin-login-form">
+          <div class="field">
+            <label>Usuario</label>
+            <input type="text" id="admin-user" autocomplete="off" required />
+          </div>
+          <div class="field">
+            <label>Contraseña</label>
+            <input type="text" id="admin-pass" autocomplete="off" required />
+          </div>
+          <button type="submit" class="primary">Ingresar</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="admin-panel-wrap" style="display:none;">
+      <div class="admin-bar">
+        <span>Sesión de administrador activa</span>
+        <button id="admin-logout">Cerrar sesión</button>
+      </div>
+      <p class="section-label">Todas las reservas (editar / eliminar)</p>
+      <div id="admin-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  const RECURSOS = ["Smart TV", "Laptop", "Proyector de Video"];
+  let reservations = [];
+  let adminLoggedIn = false;
+  let pendingFile = null; // {name, type, dataUrl}
+  let editingId = null;
+
+  // ---------- storage helpers ----------
+  async function loadReservations(){
+    try{
+      const res = await window.storage.get('reservations', true);
+      reservations = res && res.value ? JSON.parse(res.value) : [];
+    }catch(e){
+      reservations = [];
+    }
+    renderAll();
+  }
+  async function saveReservations(){
+    try{
+      await window.storage.set('reservations', JSON.stringify(reservations), true);
+    }catch(e){
+      showMsg('form-msg', 'No se pudo guardar en el almacenamiento compartido. Intenta de nuevo.', 'warn');
+    }
+  }
+
+  // ---------- utils ----------
+  function uid(){ return 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+  function showMsg(elId, text, kind){
+    const el = document.getElementById(elId);
+    el.textContent = text;
+    el.className = 'msg show ' + kind;
+    setTimeout(()=>{ el.className = 'msg'; }, 4500);
+  }
+  function fmtDateStub(dateStr){
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    const meses = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+    return { day: String(d).padStart(2,'0'), mon: meses[m-1] };
+  }
+  function fmtDateLong(dateStr){
+    const [y,m,d] = dateStr.split('-').map(Number);
+    const dt = new Date(y, m-1, d);
+    return dt.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+  }
+  function overlaps(aStart, aEnd, bStart, bEnd){
+    return aStart < bEnd && bStart < aEnd;
+  }
+  function checkConflict(recurso, fecha, inicio, fin, excludeId){
+    return reservations.find(r =>
+      r.id !== excludeId &&
+      r.recurso === recurso &&
+      r.fecha === fecha &&
+      overlaps(inicio, fin, r.inicio, r.fin)
+    );
+  }
+  function sortedReservations(list){
+    return [...list].sort((a,b)=>{
+      const da = a.fecha + ' ' + a.inicio;
+      const db = b.fecha + ' ' + b.inicio;
+      return da.localeCompare(db);
+    });
+  }
+  function upcomingOnly(list){
+    const today = new Date().toISOString().slice(0,10);
+    return list.filter(r => r.fecha >= today);
+  }
+
+  // ---------- ticket rendering ----------
+  function ticketHTML(r, opts){
+    opts = opts || {};
+    const stub = fmtDateStub(r.fecha);
+    let supportTag = '';
+    if(r.apoyo){
+      if(r.apoyoTipo === 'Impresiones'){
+        supportTag = `<span class="tag support">🖨️ ${r.copias || '?'} copia(s)${r.archivoNombre ? ' · '+escapeHtml(r.archivoNombre) : ''}</span>`;
+      } else {
+        supportTag = `<span class="tag support">🛠️ Apoyo adicional</span>`;
+      }
+    }
+    const actions = opts.admin ? `
+      <div class="ticket-actions">
+        <button class="edit" data-id="${r.id}">Editar</button>
+        <button class="del" data-id="${r.id}">Eliminar</button>
+      </div>` : '';
+    return `
+      <div class="ticket" data-ticket-id="${r.id}">
+        <div class="ticket-stub">
+          <div class="day">${stub.day}</div>
+          <div class="mon">${stub.mon}</div>
+        </div>
+        <div class="ticket-body">
+          <div class="ticket-top">
+            <p class="ticket-org">${escapeHtml(r.organizacion)}</p>
+            <span class="ticket-time">${r.inicio} – ${r.fin}</span>
+          </div>
+          <div class="ticket-meta">
+            <span class="tag resource">${iconFor(r.recurso)} ${escapeHtml(r.recurso)}</span>
+            ${supportTag}
+            <span>· ${escapeHtml(r.nombre)}</span>
+          </div>
+          ${r.proposito ? `<p class="ticket-purpose">${escapeHtml(r.proposito)}</p>` : ''}
+          ${r.apoyoTipo === 'Otro' && r.apoyoOtro ? `<p class="ticket-purpose">Apoyo: ${escapeHtml(r.apoyoOtro)}</p>` : ''}
+          ${actions}
+          <div class="edit-form-slot"></div>
+        </div>
+      </div>`;
+  }
+  function iconFor(recurso){
+    if(recurso === 'Smart TV') return '📺';
+    if(recurso === 'Laptop') return '💻';
+    return '🎥';
+  }
+  function escapeHtml(s){
+    if(!s) return '';
+    return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function emptyState(text){
+    return `<div class="empty"><div class="big">Nada por aquí todavía</div>${text}</div>`;
+  }
+
+  // ---------- render ----------
+  function renderAll(){
+    renderQuickList();
+    renderFullList();
+    if(adminLoggedIn) renderAdminList();
+  }
+
+  function renderQuickList(){
+    const list = sortedReservations(upcomingOnly(reservations)).slice(0,5);
+    const el = document.getElementById('quick-list');
+    el.innerHTML = list.length ? list.map(r=>ticketHTML(r)).join('') : emptyState('Aún no hay reservas próximas. Sé el primero en agendar un recurso.');
+  }
+
+  function renderFullList(){
+    const recFilter = document.getElementById('filter-recurso').value;
+    const dateFilter = document.getElementById('filter-fecha').value;
+    let list = sortedReservations(reservations);
+    if(recFilter) list = list.filter(r=>r.recurso === recFilter);
+    if(dateFilter) list = list.filter(r=>r.fecha === dateFilter);
+    const el = document.getElementById('full-list');
+    el.innerHTML = list.length ? list.map(r=>ticketHTML(r)).join('') : emptyState('No hay reservas que coincidan con estos filtros.');
+  }
+
+  function renderAdminList(){
+    const list = sortedReservations(reservations);
+    const el = document.getElementById('admin-list');
+    el.innerHTML = list.length ? list.map(r=>ticketHTML(r, {admin:true})).join('') : emptyState('Todavía no se ha creado ninguna reserva.');
+    el.querySelectorAll('button.del').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        if(confirm('¿Eliminar esta reserva? Esta acción no se puede deshacer.')){
+          reservations = reservations.filter(r=>r.id !== btn.dataset.id);
+          await saveReservations();
+          renderAll();
+        }
+      });
+    });
+    el.querySelectorAll('button.edit').forEach(btn=>{
+      btn.addEventListener('click', ()=> openEdit(btn.dataset.id));
+    });
+  }
+
+  function openEdit(id){
+    const r = reservations.find(x=>x.id === id);
+    if(!r) return;
+    const ticket = document.querySelector(`#admin-list [data-ticket-id="${id}"] .edit-form-slot`);
+    // close any other open edit forms
+    document.querySelectorAll('.edit-form-slot').forEach(s=>s.innerHTML='');
+    ticket.innerHTML = `
+      <div class="edit-form">
+        <div class="row2">
+          <div class="field">
+            <label>Organización</label>
+            <select class="e-org">
+              ${["Cuórum de Elderes","Sociedad de Socorro","Mujeres Jóvenes","Hombres Jóvenes","Primaria","Escuela Dominical de Adultos","Escuela Dominical de Jóvenes 11 - 14","Escuela Dominical de Jóvenes 15 - 17","JAS","Obispado"].map(o=>`<option ${o===r.organizacion?'selected':''}>${o}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label>Recurso</label>
+            <select class="e-recurso">
+              ${RECURSOS.map(x=>`<option ${x===r.recurso?'selected':''}>${x}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Fecha</label><input type="date" class="e-fecha" value="${r.fecha}"/></div>
+          <div class="field"><label>Persona</label><input type="text" class="e-nombre" value="${escapeHtml(r.nombre)}"/></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Hora inicio</label><input type="time" class="e-inicio" value="${r.inicio}"/></div>
+          <div class="field"><label>Hora fin</label><input type="time" class="e-fin" value="${r.fin}"/></div>
+        </div>
+        <div class="field"><label>Propósito</label><textarea class="e-proposito">${escapeHtml(r.proposito||'')}</textarea></div>
+        <div class="ticket-actions">
+          <button class="edit e-save">Guardar cambios</button>
+          <button class="del e-cancel">Cancelar</button>
+        </div>
+      </div>`;
+    ticket.querySelector('.e-save').addEventListener('click', async ()=>{
+      const newRec = ticket.querySelector('.e-recurso').value;
+      const newFecha = ticket.querySelector('.e-fecha').value;
+      const newInicio = ticket.querySelector('.e-inicio').value;
+      const newFin = ticket.querySelector('.e-fin').value;
+      if(newInicio >= newFin){ alert('La hora de fin debe ser posterior a la hora de inicio.'); return; }
+      const conflict = checkConflict(newRec, newFecha, newInicio, newFin, r.id);
+      if(conflict){ alert(`Conflicto: ${conflict.organizacion} ya reservó ${conflict.recurso} ese día de ${conflict.inicio} a ${conflict.fin}.`); return; }
+      r.organizacion = ticket.querySelector('.e-org').value;
+      r.recurso = newRec;
+      r.fecha = newFecha;
+      r.nombre = ticket.querySelector('.e-nombre').value;
+      r.inicio = newInicio;
+      r.fin = newFin;
+      r.proposito = ticket.querySelector('.e-proposito').value;
+      await saveReservations();
+      renderAll();
+    });
+    ticket.querySelector('.e-cancel').addEventListener('click', ()=>{ ticket.innerHTML=''; });
+  }
+
+  // ---------- tabs ----------
+  document.querySelectorAll('nav.tabs button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-' + btn.dataset.view).classList.add('active');
+    });
+  });
+
+  // ---------- support toggle ----------
+  const supportCheck = document.getElementById('f-apoyo-check');
+  const supportBlock = document.getElementById('support-block');
+  supportCheck.addEventListener('change', ()=>{
+    supportBlock.classList.toggle('show', supportCheck.checked);
+  });
+  document.getElementById('f-apoyo-tipo').addEventListener('change', (e)=>{
+    const isPrint = e.target.value === 'Impresiones';
+    document.getElementById('apoyo-impresiones').style.display = isPrint ? 'block' : 'none';
+    document.getElementById('apoyo-otro-field').style.display = isPrint ? 'none' : 'block';
+  });
+
+  // ---------- file upload ----------
+  const fileInput = document.getElementById('f-archivo');
+  const fileDropLabel = document.getElementById('file-drop-label');
+  fileDropLabel.addEventListener('click', ()=> fileInput.click());
+  fileInput.addEventListener('change', ()=>{
+    const file = fileInput.files[0];
+    if(!file) return;
+    if(file.size > 3 * 1024 * 1024){
+      showMsg('form-msg', 'El archivo supera los 3 MB permitidos. Elige uno más pequeño.', 'warn');
+      fileInput.value = '';
+      pendingFile = null;
+      fileDropLabel.textContent = 'Toca para adjuntar archivo (máx. 3 MB)';
+      fileDropLabel.classList.remove('has-file');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      pendingFile = { name: file.name, type: file.type, dataUrl: reader.result };
+      fileDropLabel.textContent = '✓ ' + file.name;
+      fileDropLabel.classList.add('has-file');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // ---------- reserva form submit ----------
+  document.getElementById('reserva-form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const organizacion = document.getElementById('f-org').value;
+    const recurso = document.getElementById('f-recurso').value;
+    const fecha = document.getElementById('f-fecha').value;
+    const nombre = document.getElementById('f-nombre').value.trim();
+    const inicio = document.getElementById('f-inicio').value;
+    const fin = document.getElementById('f-fin').value;
+    const proposito = document.getElementById('f-proposito').value.trim();
+    const apoyo = document.getElementById('f-apoyo-check').checked;
+    const apoyoTipo = document.getElementById('f-apoyo-tipo').value;
+    const copias = document.getElementById('f-copias').value;
+    const apoyoOtro = document.getElementById('f-apoyo-otro').value.trim();
+
+    if(!organizacion || !recurso || !fecha || !nombre || !inicio || !fin){
+      showMsg('form-msg', 'Por favor completa todos los campos obligatorios.', 'warn');
+      return;
+    }
+    if(inicio >= fin){
+      showMsg('form-msg', 'La hora de fin debe ser posterior a la hora de inicio.', 'warn');
+      return;
+    }
+    const conflict = checkConflict(recurso, fecha, inicio, fin, null);
+    if(conflict){
+      showMsg('form-msg', `Ese horario ya está ocupado por ${conflict.organizacion} (${conflict.inicio}–${conflict.fin}). Elige otro horario.`, 'warn');
+      return;
+    }
+    if(apoyo && apoyoTipo === 'Impresiones' && !copias){
+      showMsg('form-msg', 'Indica la cantidad de copias que necesitas.', 'warn');
+      return;
+    }
+
+    const nueva = {
+      id: uid(),
+      organizacion, recurso, fecha, inicio, fin, nombre, proposito,
+      apoyo,
+      apoyoTipo: apoyo ? apoyoTipo : null,
+      copias: (apoyo && apoyoTipo === 'Impresiones') ? Number(copias) : null,
+      apoyoOtro: (apoyo && apoyoTipo === 'Otro') ? apoyoOtro : null,
+      archivoNombre: pendingFile ? pendingFile.name : null,
+      archivoData: pendingFile ? pendingFile.dataUrl : null,
+      creado: new Date().toISOString()
+    };
+    reservations.push(nueva);
+    await saveReservations();
+    showMsg('form-msg', '¡Reserva creada con éxito!', 'ok');
+    e.target.reset();
+    supportBlock.classList.remove('show');
+    document.getElementById('apoyo-impresiones').style.display = 'block';
+    document.getElementById('apoyo-otro-field').style.display = 'none';
+    pendingFile = null;
+    fileDropLabel.textContent = 'Toca para adjuntar archivo (máx. 3 MB)';
+    fileDropLabel.classList.remove('has-file');
+    renderAll();
+  });
+
+  // ---------- filters ----------
+  document.getElementById('filter-recurso').addEventListener('change', renderFullList);
+  document.getElementById('filter-fecha').addEventListener('change', renderFullList);
+  document.getElementById('clear-filters').addEventListener('click', (e)=>{
+    e.preventDefault();
+    document.getElementById('filter-recurso').value = '';
+    document.getElementById('filter-fecha').value = '';
+    renderFullList();
+  });
+
+  // ---------- admin ----------
+  document.getElementById('admin-login-form').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const u = document.getElementById('admin-user').value;
+    const p = document.getElementById('admin-pass').value;
+    if(u === 'Admin' && p === 'Burgos'){
+      adminLoggedIn = true;
+      document.getElementById('admin-login-wrap').style.display = 'none';
+      document.getElementById('admin-panel-wrap').style.display = 'block';
+      renderAdminList();
+    } else {
+      showMsg('admin-msg', 'Usuario o contraseña incorrectos.', 'warn');
+    }
+  });
+  document.getElementById('admin-logout').addEventListener('click', ()=>{
+    adminLoggedIn = false;
+    document.getElementById('admin-login-wrap').style.display = 'block';
+    document.getElementById('admin-panel-wrap').style.display = 'none';
+    document.getElementById('admin-user').value = '';
+    document.getElementById('admin-pass').value = '';
+  });
+
+  // ---------- init ----------
+  loadReservations();
+})();
+</script>
+</body>
+</html>
