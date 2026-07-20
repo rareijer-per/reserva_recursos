@@ -42,11 +42,21 @@ No requiere instalación, servidor ni base de datos externa: es un único archiv
 
 ## Dónde se guardan los datos
 
-Las reservas se guardan en un **almacenamiento compartido** asociado a este artefacto. Esto significa que:
+Las reservas **no se guardan en la caché ni en el almacenamiento local del navegador** (no usa `localStorage` ni datos temporales del dispositivo). En su lugar, se guardan en el **almacenamiento persistente y compartido del artefacto** (una especie de "repositorio" asociado a esta app), lo cual significa que:
 
-- Todas las personas que abran esta misma app (mismo enlace/artefacto) ven **las mismas reservas**, lo cual permite que las organizaciones se coordinen entre sí sin pisarse los horarios.
+- Todas las personas que abran esta misma app (mismo enlace/artefacto) ven **las mismas reservas**, sin importar el navegador o dispositivo que usen.
+- Los datos **persisten entre sesiones**: no se pierden al cerrar la pestaña, recargar la página o cambiar de dispositivo.
 - No se necesita servidor propio ni configuración adicional.
-- Si se abre el archivo HTML de forma completamente independiente (por ejemplo, descargado y abierto fuera de Claude), el almacenamiento compartido puede no estar disponible; en ese caso, lo recomendable es seguir usando el enlace del artefacto dentro de Claude para que todos accedan a los mismos datos.
+
+### Limpieza automática cada 2 semanas
+
+Para no acumular datos indefinidamente, la app aplica una política de retención automática:
+
+- Cualquier reserva cuya **fecha del evento tenga más de 14 días de antigüedad** se elimina automáticamente del repositorio.
+- Esta limpieza se ejecuta cada vez que alguien abre la app, y además se vuelve a revisar cada hora mientras la app permanece abierta (por si alguien la deja abierta varios días).
+- No requiere intervención del administrador ni de ningún usuario: es completamente automática.
+- Si necesitas conservar reservas antiguas para historial (por ejemplo, para un reporte anual), deberás exportarlas o anotarlas antes de que se cumplan las 2 semanas, ya que la app no guarda un respaldo aparte.
+- Si el archivo HTML se abre de forma completamente independiente (por ejemplo, descargado y abierto fuera de Claude), el almacenamiento compartido puede no estar disponible; para que todas las organizaciones vean los mismos datos, lo recomendable es seguir usando el enlace del artefacto dentro de Claude.
 
 ---
 
