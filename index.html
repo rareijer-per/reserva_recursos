@@ -550,6 +550,22 @@
   let editingId = null;
 
   // ---------- storage helpers ----------
+  // Los datos NO se guardan en caché del navegador: se guardan en el
+  // almacenamiento compartido del artefacto (persistente entre sesiones y
+  // visible para todas las organizaciones). Como política de limpieza,
+  // cualquier reserva cuya fecha tenga más de 14 días de antigüedad se
+  // elimina automáticamente para no acumular datos indefinidamente.
+  const RETENTION_DAYS = 14;
+
+  function purgeOldReservations(){
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - RETENTION_DAYS);
+    const cutoffStr = cutoff.toISOString().slice(0,10);
+    const before = reservations.length;
+    reservations = reservations.filter(r => r.fecha >= cutoffStr);
+    return reservations.length !== before;
+  }
+
   async function loadReservations(){
     try{
       const res = await window.storage.get('reservations', true);
@@ -557,6 +573,8 @@
     }catch(e){
       reservations = [];
     }
+    const changed = purgeOldReservations();
+    if(changed) await saveReservations();
     renderAll();
   }
   async function saveReservations(){
@@ -898,6 +916,16 @@
 
   // ---------- init ----------
   loadReservations();
+
+  // Revisión periódica por si la app permanece abierta mucho tiempo:
+  // vuelve a aplicar la política de limpieza de 2 semanas cada hora.
+  setInterval(async ()=>{
+    const changed = purgeOldReservations();
+    if(changed){
+      await saveReservations();
+      renderAll();
+    }
+  }, 60 * 60 * 1000);
 })();
 </script>
 </body>
